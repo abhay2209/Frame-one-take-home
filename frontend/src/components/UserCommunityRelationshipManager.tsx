@@ -33,7 +33,16 @@ const UserCommunityRelationshipManager = () => {
             refetchUsers();
         },
         onError: (error: any) => {
-            toast.error(`Error: ${error.message}`);
+            if (error?.response && error.response?.data) {
+                const errorResponse = error.response?.data
+                if (errorResponse?.communityId) {
+                    toast.error(`${errorResponse.message}${communities.find((community: Community) => community._id == errorResponse.communityId ).name}`)
+                } else {
+                    toast.error(`Error: ${error.response.data.message}`);
+                }
+            } else {
+                toast.error(`Error: ${error.message}`);
+            }
         }
     });
     const leaveMutation = useMutation({
@@ -43,7 +52,16 @@ const UserCommunityRelationshipManager = () => {
             refetchUsers();
         },
         onError: (error: any) => {
-            toast.error(`Error: ${error.message}`);
+            if (error?.response && error.response?.data) {
+                const errorResponse = error.response?.data
+                if (errorResponse?.communityId) {
+                    toast.error(`${error.message}${communities.find((community: Community) => community._id == errorResponse.communityId ).name}`)
+                } else {
+                    toast.error(`Error: ${error.response.data.message}`);
+                }
+            } else {
+                toast.error(`Error: ${error.message}`);
+            }
         }
     });
 

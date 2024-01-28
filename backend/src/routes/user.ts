@@ -52,7 +52,13 @@ userRouter.post("/:userId/join/:communityId", async (req, res) => {
   
 	  const existingUser = await UserModel.findById(userId).exec();
 	  if (existingUser?.currentCommunityId) {
-		return res.status(400).send({ message: `This user is already a part of a community: ${existingUser?.currentCommunityId }` });
+		if (existingUser?.currentCommunityId === communityId) {
+			return res.status(400).send({ message: `User is already part of this community` });
+		} else 
+		return res.status(400).send({
+			 message: `This user is already a part of a community: `,
+			 communityId: existingUser?.currentCommunityId
+	 });
 	  } 
   
 	  const updatedUser = await UserModel.findByIdAndUpdate(userId, { currentCommunityId: communityId }, { new: true }).exec();
@@ -75,12 +81,15 @@ userRouter.delete("/:userId/leave/:communityId", async (req, res) => {
 		const { userId, communityId } = req.params;
 		const existingUser = await UserModel.findById(userId).exec();
 
-		if (existingUser?.currentCommunityId !== undefined) {
+		if (existingUser?.currentCommunityId && existingUser?.currentCommunityId !== null) {
 			if (existingUser.currentCommunityId === communityId) {
 				const updatedUser = await UserModel.findByIdAndUpdate(userId, { currentCommunityId: null }, { new: true }).exec();
 				return res.send(updatedUser);
 			}
-			return res.status(400).send({ message: `Couldn't leave community, this user is part of a different community: ${existingUser.currentCommunityId}` });
+			return res.status(400).send({ 
+				message: `Couldn't leave community, this user is part of a different community: `,
+				communityId: existingUser.currentCommunityId
+			});
 		} else {
 			return res.status(400).send({ message: `Couldn't leave community, the user is presently part of no community` });
 		}
