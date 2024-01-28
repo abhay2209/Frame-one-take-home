@@ -8,10 +8,13 @@
     "dev:frontend": "pnpm -filter frontend run dev"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
   },
   "engines": {
     "node": "^20.0.0"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.4"
   }
 }

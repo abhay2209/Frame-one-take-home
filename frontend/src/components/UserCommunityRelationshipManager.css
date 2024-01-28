@@ -26,3 +26,7 @@ label {
     display: block;
     margin: 10px 0;
 }
+
+.padding-top-leaderboard {
+    padding-top: 4rem;
+}

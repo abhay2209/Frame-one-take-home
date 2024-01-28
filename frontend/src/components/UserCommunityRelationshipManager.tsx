@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Community, User } from '../interfaces';
 import "./UserCommunityRelationshipManager.css";
 import { toast } from 'react-hot-toast';
+import Leaderboard from './Leaderboard';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface MutationData {
     userId: string;
@@ -14,7 +16,7 @@ const UserCommunityRelationshipManager = () => {
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
 
-    const { data: users, isLoading: usersLoading } = useQuery({
+    const { data: users, isLoading: usersLoading , refetch: refetchUsers} = useQuery({
         queryKey: ['users'],
         queryFn: () => axios.get('http://localhost:8080/user').then(res => res.data)
     });
@@ -28,6 +30,7 @@ const UserCommunityRelationshipManager = () => {
         mutationFn: (data: MutationData) => axios.post(`http://localhost:8080/user/${data.userId}/join/${data.communityId}`),
         onSuccess: () => {
             toast.success('Successfully joined the community');
+            refetchUsers();
         },
         onError: (error: any) => {
             toast.error(`Error: ${error.message}`);
@@ -37,6 +40,7 @@ const UserCommunityRelationshipManager = () => {
         mutationFn: (data: MutationData) => axios.delete(`http://localhost:8080/user/${data.userId}/leave/${data.communityId}`),
         onSuccess: () => {
             toast.success('Successfully left the community');
+            refetchUsers();
         },
         onError: (error: any) => {
             toast.error(`Error: ${error.message}`);
@@ -91,6 +95,12 @@ const UserCommunityRelationshipManager = () => {
             >
                 Leave
             </button>
+            <div className={"padding-top-leaderboard"}>
+                {(users && communities) ? (
+                    <Leaderboard users={users} communities={communities}/>
+                ): (<CircularProgress />)}
+           
+            </div>
         </div>
     );
 };

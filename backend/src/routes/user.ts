@@ -32,7 +32,8 @@ userRouter.get("/", async (_, res) => {
 				_id: "$_id",
 				email: { $first: "$email" },
 				profilePicture: { $first: "$profilePicture" },
-				totalExperience: { $sum: "$experiencePoints.points" }
+				totalExperience: { $sum: "$experiencePoints.points" },
+				currentCommunityId: {$first: "$currentCommunityId"},
 			}
 		}
 	]);
@@ -77,7 +78,7 @@ userRouter.delete("/:userId/leave/:communityId", async (req, res) => {
 		if (existingUser?.currentCommunityId) {
 			if (existingUser.currentCommunityId === communityId) {
 				const updatedUser = await UserModel.findByIdAndUpdate(userId, { currentCommunityName: null }, { new: true }).exec();
-				res.send(updatedUser);
+				return res.send(updatedUser);
 			}
 			return res.status(400).send({ message: `Couldn't leave community, this user is part of a different community: ${existingUser.currentCommunityId}` });
 		} else {

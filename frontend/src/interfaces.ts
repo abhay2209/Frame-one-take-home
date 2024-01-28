@@ -4,6 +4,7 @@ export interface User {
     profilePicture?: string;
     totalExperience?: number;
     experiencePoints?: {points: number, timestamp: string}[];
+    currentCommunityId?: string;
 }
   
 export interface Community {
