@@ -12,6 +12,11 @@ interface MutationData {
     communityId: string;
 };
 
+function getCommunityNameFromId(communities: Community[], id: string): string {
+    const communityName = communities.find((community: Community) => community._id == id);
+    return communityName ? communityName.name : "Unknown name";
+}
+
 const UserCommunityRelationshipManager = () => {
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
@@ -36,7 +41,7 @@ const UserCommunityRelationshipManager = () => {
             if (error?.response && error.response?.data) {
                 const errorResponse = error.response?.data
                 if (errorResponse?.communityId) {
-                    toast.error(`${errorResponse.message}${communities.find((community: Community) => community._id == errorResponse.communityId ).name}`)
+                    toast.error(`${errorResponse.message}${getCommunityNameFromId(communities, errorResponse.communityId)}`)
                 } else {
                     toast.error(`Error: ${error.response.data.message}`);
                 }
@@ -55,7 +60,7 @@ const UserCommunityRelationshipManager = () => {
             if (error?.response && error.response?.data) {
                 const errorResponse = error.response?.data
                 if (errorResponse?.communityId) {
-                    toast.error(`${error.message}${communities.find((community: Community) => community._id == errorResponse.communityId ).name}`)
+                    toast.error(`${errorResponse.message}${getCommunityNameFromId(communities, errorResponse.communityId)}`)
                 } else {
                     toast.error(`Error: ${error.response.data.message}`);
                 }
@@ -77,7 +82,7 @@ const UserCommunityRelationshipManager = () => {
         }
     };
 
-    if (usersLoading || communitiesLoading) return 'Loading...';
+    if (usersLoading || communitiesLoading) return <CircularProgress />;
 
     return (
         <div>
@@ -114,9 +119,9 @@ const UserCommunityRelationshipManager = () => {
                 Leave
             </button>
             <div className={"padding-top-leaderboard"}>
-                {(users && communities) ? (
+                {(users.length > 0 && users.length > 0) && (
                     <Leaderboard users={users} communities={communities}/>
-                ): (<CircularProgress />)}
+                )}
            
             </div>
         </div>
