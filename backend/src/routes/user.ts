@@ -57,10 +57,10 @@ userRouter.post("/:userId/join/:communityId", async (req, res) => {
   
 	  const updatedUser = await UserModel.findByIdAndUpdate(userId, { currentCommunityId: communityId }, { new: true }).exec();
 
-	  res.send(updatedUser);
+	  return res.send(updatedUser);
 
 	} catch (error) {
-	  res.status(500).send({ message: `Error joining community, couldn't update user` });
+	  return res.status(500).send({ message: `Error joining community, couldn't update user` });
 	}
 });
 
@@ -75,9 +75,9 @@ userRouter.delete("/:userId/leave/:communityId", async (req, res) => {
 		const { userId, communityId } = req.params;
 		const existingUser = await UserModel.findById(userId).exec();
 
-		if (existingUser?.currentCommunityId) {
+		if (existingUser?.currentCommunityId !== undefined) {
 			if (existingUser.currentCommunityId === communityId) {
-				const updatedUser = await UserModel.findByIdAndUpdate(userId, { currentCommunityName: null }, { new: true }).exec();
+				const updatedUser = await UserModel.findByIdAndUpdate(userId, { currentCommunityId: null }, { new: true }).exec();
 				return res.send(updatedUser);
 			}
 			return res.status(400).send({ message: `Couldn't leave community, this user is part of a different community: ${existingUser.currentCommunityId}` });
@@ -86,7 +86,7 @@ userRouter.delete("/:userId/leave/:communityId", async (req, res) => {
 		}
 		
 	  } catch (error) {
-		res.status(500).send({ message: `Error leaving community, couldn't update user` });
+		return res.status(500).send({ message: `Error leaving community, couldn't update user` });
 	  }
 });
 
